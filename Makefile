@@ -1,6 +1,6 @@
 CFLAGS = -Wall -Wextra -Werror
 CC = cc
-SRCS = main.c
+SRCS = main.c mandelbrot.c julia.c setting.c hook.c input.c ft_printf.c move.c move_1.c
 NAME = fractol
 OBJS = $(SRCS:.c=.o)
 LIB = libft/libft.a

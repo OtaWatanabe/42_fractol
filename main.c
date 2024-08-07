@@ -6,20 +6,16 @@
 /*   By: otawatanabe <otawatanabe@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 16:04:19 by otawatanabe       #+#    #+#             */
-/*   Updated: 2024/02/18 20:22:08 by otawatanabe      ###   ########.fr       */
+/*   Updated: 2024/08/07 09:24:14 by otawatanabe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <mlx.h>
+#include "ft_fractol.h"
 
-typedef struct s_data
-{
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}	t_data;
+// __attribute__((destructor))
+// static void destructor() {
+//     system("leaks -q fractol");
+// }
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -29,19 +25,25 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-int main()
+void	draw(t_vars *vars)
 {
-	void	*mlx;
-	void	*mlx_win;
-	t_data	img;
-	
-	mlx = mlx_init();
-	img.img = mlx_new_image(mlx, 1000, 500);
-	mlx_win = mlx_new_window(mlx, 1000, 500, "Hello world!");
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	my_mlx_pixel_put(&img, 10, 10, 0x00FF0000);
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	mlx_loop(mlx);
+	if (vars->type[0] == 'm')
+		mandelbrot(vars);
+	else
+		julia(vars);
+}
+
+int	main(int argc, char *argv[])
+{
+	t_vars	*vars;
+
+	vars = malloc(sizeof(t_vars));
+	if (vars == NULL)
+		return (0);
+	process_input(argc, argv, vars);
+	set_vars(vars);
+	draw(vars);
+	mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->img.img, 0, 0);
+	mlx_loop(vars->mlx);
+	free(vars);
 }
